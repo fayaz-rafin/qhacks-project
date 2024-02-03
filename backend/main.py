@@ -1,3 +1,4 @@
+# https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/sdk-overview-v4-0?view=doc-intel-4.0.0&tabs=python
 import base64
 import os
 import dotenv
@@ -7,9 +8,13 @@ import requests
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 
+from azure_test import extract_value
+
 dotenv.load_dotenv()
 
 OCR_API_KEY = os.environ["OCR_API_KEY"]
+AZURE_API_KEY = os.environ["AZURE_API_KEY"]
+AZURE_ENDPOINT = os.environ["AZURE_ENDPOINT"]
 
 app = FastAPI()
 
@@ -37,30 +42,9 @@ def upload(file: UploadFile = File(...), user:str = Form(...)):
     :param user: Metadata
     :return:
     """
-    try:
-        contents = file.file.read()
-        encoded_contents = base64.b64encode(contents).decode('utf-8')
-        base64encoded = f"data:image/{file.filename.split('.')[-1]};base64,{encoded_contents}"
-        # print(base64encoded)
-        # with open(file.filename, 'wb') as f:
-        #     f.write(contents)
-        url = "https://api.ocr.space/parse/image"
-        body_json = {
-            "apikey": OCR_API_KEY,
-            "language": "eng",
-            "isTable": "true",
-            "filetype": "jpg",
-            "OCREngine": "1",
-            "base64Image": base64encoded
-        }
-        x = requests.post(url, json=body_json)
-        print(x.text)
-    except Exception:
-        return {"message": "There was an error uploading the file"}
-    finally:
-        file.file.close()
-    # print(user)
-    # print(f"data:image/{file.filename.split('.')[-1]};base64,{encoded_contents}")
+    contents = file.file.read()
+    extract_value(contents)
+    print(user)
 
-    return {"message": f"Successfully uploaded {file.filename}", "base64_contents": encoded_contents}
+    return {"message": f"Successfully uploaded {file.filename}"}
 
