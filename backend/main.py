@@ -1,14 +1,12 @@
-# https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/sdk-overview-v4-0?view=doc-intel-4.0.0&tabs=python
+# https://fastapi.tiangolo.com/tutorial/request-files/#optional-file-upload
 import base64
 import os
 import dotenv
-from typing import Optional
-import requests
 
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
 
-from azure_test import extract_value
+from azure_functions import extract_value
 
 dotenv.load_dotenv()
 
@@ -36,15 +34,15 @@ async def root():
 @app.post("/upload")
 def upload(file: UploadFile = File(...), user:str = Form(...)):
     """
-    https://fastapi.tiangolo.com/tutorial/request-files/#optional-file-upload
     Uploads a file to the server
     :param file: Receipt file
     :param user: Metadata
     :return:
     """
     contents = file.file.read()
-    extract_value(contents)
+    receipt = extract_value(contents)
+    print(receipt)
     print(user)
 
-    return {"message": f"Successfully uploaded {file.filename}"}
+    return {"message": f"Successfully uploaded {file.filename}", "user": user, "receipt": receipt}
 
