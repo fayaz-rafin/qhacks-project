@@ -14,6 +14,18 @@ project_root/
 └── requirements.txt            # Python dependencies
 ```
 ## How to Run
+- Create a `.env` file with following content
+```env
+AZURE_API_KEY=<AZURE_API_KEY>
+AZURE_ENDPOINT=<AZURE_ENDPOINT>
+CLOUDFLARE_API_KEY=<CLOUDFLARE_API_KEY>
+CLOUDFLARE_ACCOUNT_ID=<CLOUDFLARE_ACCOUNT_ID>
+CLOUDFLARE_BASE_URL=<CLOUDFLARE_BASE_URL>
+REDIS_URL=<REDIS_URL>
+DISCORD_WEBHOOK=<DISCORD_WEBHOOK>
+AZURE_BLOB_API_KEY=<AZURE_BLOB_API_KEY>
+AZURE_BLOB_ENDPOINT=<AZURE_BLOB_ENDPOINT>
+```
 - Install dependencies `pip install -r requirements.txt`
 - Run `uvicorn main:app  --reload --host 0.0.0.0 --port 8080`
 - Send POST request to `http://localhost:8080/` according to documentation
