@@ -6,7 +6,6 @@ from fastapi.middleware.cors import CORSMiddleware
 from azure_functions import extract_value, upload_blob_stream
 from redis_functions import existing_database, add_vectors, initialize_database
 from cron_function import check_for_new_recalls, sample_recall
-from typing import List, Optional
 from pydantic import BaseModel, HttpUrl, Field
 
 dotenv.load_dotenv()
@@ -66,11 +65,6 @@ class UploadResponse(BaseModel):
                               description="The URL of the uploaded file.")
 
 
-class UploadInput(BaseModel):
-    file: bytes = Field(..., example="example_file_content", alias="file", description="The uploaded receipt file.")
-    user: str = Field(..., example="1234", alias="user", description="The user's identifier.")
-
-
 class CronResponse(BaseModel):
     message: str = Field(..., example="Cron job complete",
                          description="A message indicating the completion of the cron job.")
@@ -81,18 +75,8 @@ class RecallResponse(BaseModel):
                          description="A message indicating the completion of the sample recall.")
 
 
-class CronInput(BaseModel):
-    user: str = Field(..., example="1234", alias="user", description="The user's identifier.")
-
-
-class RecallInput(BaseModel):
-    user: str = Field(..., example="1234", alias="user", description="The user's identifier.")
-    product: str = Field(..., example="product_name", alias="product",
-                         description="The name of the product to be recalled.")
-
-
 @app.post("/upload", response_model=UploadResponse, tags=["server"])
-def upload(upload_input: UploadInput):
+def upload(file: UploadFile = File(...), user: str = Form(...)):
     """
     Uploads a file to the server and processes the receipt data.
 
@@ -109,12 +93,12 @@ def upload(upload_input: UploadInput):
     Raises:
     None.
     """
-    contents = upload_input.file
+    contents = file.file.read()
     receipt = extract_value(contents)
     try:
-        rds = existing_database(upload_input.user)
+        rds = existing_database(user)
     except Exception as e:
-        rds = initialize_database(upload_input.user)
+        rds = initialize_database(user)
     for transaction in receipt:
         for item in transaction['items']:
             embed_json = {'description': item['description']}
@@ -123,17 +107,15 @@ def upload(upload_input: UploadInput):
             if 'transaction_date' in transaction:
                 embed_json['transaction_date'] = transaction['transaction_date']
             add_vectors(rds, [item['description']], [embed_json])
-    file_name = upload_input.file.filename
-    file_url = upload_blob_stream(upload_input.user, contents, file_name)
+    file_name = file.filename
+    file_url = upload_blob_stream(user, contents, file_name)
     # print(receipt)
 
-    return {"message": f"Successfully uploaded {upload_input.file.filename}", "user": upload_input.user,
-            "file_url": file_url}
-
+    return {"message": f"Successfully uploaded {file.filename}", "user": user, "file_url": file_url}
 
 
 @app.post("/cron", response_model=CronResponse, tags=["server"])
-def cron(cron_input: CronInput):
+def cron(user: str = Form(...)):
     """
     Perform a cron job to check for new recalls for a given user.
 
@@ -146,12 +128,12 @@ def cron(cron_input: CronInput):
     Raises:
     None.
     """
-    check_for_new_recalls(cron_input.user)
+    check_for_new_recalls(user)
     return {"message": "Cron job complete"}
 
 
 @app.post("/sample_recall", response_model=RecallResponse, tags=["server"])
-def recall(recall_input: RecallInput):
+def recall(user: str = Form(...), product: str = Form(...)):
     """
     This function is used to recall a product for a specific user.
 
@@ -165,6 +147,5 @@ def recall(recall_input: RecallInput):
     Raises:
     None.
     """
-    sample_recall(recall_input.user, recall_input.product)
+    sample_recall(user, product)
     return {"message": "Sample test complete"}
-
