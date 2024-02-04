@@ -6,7 +6,7 @@ import {useState} from "react";
 
 
 export default function App() {
-    const [showImage, setShowImage] = useState(false);
+    const [showTable, setShowTable] = useState(false);
     const [file, setFile] = useState(null);
     const [imageUrl, setImageUrl] = useState(null);
 
@@ -81,7 +81,7 @@ export default function App() {
                     >
                     </label>
                     <input
-                        className="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
+                        className=" relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
                         type="file"
                         id="formFile"
                         onChange={handleFormSubmit}
@@ -91,8 +91,43 @@ export default function App() {
 
                     </div>
                 </div>
-                <button onClick={() => setShowImage(true)} className="items-center justify-center px-12 py-3 text-base font-medium text-white bg-purple-700 border border-transparent rounded-md shadow-sm hover:bg-indigo-700">Add receipts</button>
-                {showImage && <img src="https://images-ext-2.discordapp.net/external/Rp411oR4mpyjvVmIK3T3sVwvZ7Pb8CUNwgpCVzy9DjM/https/cs21003200207f14c17.blob.core.windows.net/receipts/1/a9481f14-f703-4dff-94fc-31cec02a23f8sample_receipt.jpeg?format=webp&width=372&height=1068" className="w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem] " alt="receipt" />}
+                <button onClick={() => setShowTable(true)} className="items-center justify-center px-12 py-3 text-base font-medium text-white bg-purple-700 border border-transparent rounded-md shadow-sm hover:bg-indigo-700">Show Results</button>
+                {showTable && (
+                    <table className="table-auto py-4 px-2">
+                        <thead>
+                            <tr>
+                                <th className="px-4 py-2">Company</th>
+                                <th className="px-4 py-2">Date</th>
+                                <th className="px-4 py-2">Items</th>
+                                <th className="px-4 py-2">Recall</th>
+
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr>
+                                <td className="border px-4 py-2">Loblaws</td>
+                                <td className="border px-4 py-2">Decemner 22, 2023</td>
+                                <td className="border px-4 py-2">Lindt gold Bear</td>
+                                <td className="border px-4 py-2">No</td>
+
+                            </tr>
+                            <tr>
+                                <td className="border px-4 py-2">Loblaws</td>
+                                <td className="border px-4 py-2">Decemner 22, 2023</td>
+                                <td className="border px-4 py-2">PC Mint Herbal Tea * 2</td>
+                                <td className="border px-4 py-2">No</td>
+
+                            </tr>
+                            <tr>
+                                <td className="border px-4 py-2">Loblaws</td>
+                                <td className="border px-4 py-2">Decemner 22, 2023</td>
+                                <td className="border px-4 py-2">Cantelope</td>
+                                <td className="border px-4 py-2 text-red-500">Yes</td>
+                            </tr>
+                            {/* More rows as needed */}
+                        </tbody>
+                    </table>
+                )}
                 <div className="-ml-12 -mt-12 p-12  lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
                     <img
                         className="w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
