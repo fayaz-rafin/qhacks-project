@@ -17,8 +17,9 @@ export default function App() {
                 const formData = new FormData();
                 formData.append('file', file);
                 formData.append('user', '1'); // Add any other form data as needed
-                await sendPostRequest(formData);
+                const response = await sendPostRequest(formData);
                 console.log('File uploaded successfully');
+                return response;
             } catch (error) {
                 console.error('Error occurred while uploading file:', error);
             }
