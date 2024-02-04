@@ -55,6 +55,7 @@ def sample_recall(index: str = '1', product: str = 'Cookie'):
     webhook.send(message)
     return None
 
+
 if __name__ == "__main__":
     # schedule.every(1).minutes.do(my_function)
     schedule.every(60).seconds.do(check_for_new_recalls)
