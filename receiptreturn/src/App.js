@@ -1,5 +1,6 @@
 import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from '@heroicons/react/20/solid'
 import './App.css';
+import sendPostRequest from './SendPostRequest';
 
 
 
@@ -60,7 +61,7 @@ export default function App() {
                         id="formFile"
                     />
                 </div>
-                <button onClick={sendPostRequest} className="  items-center justify-center px-12 py-3 text-base font-medium text-white bg-purple-700 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 ">Add receipts</button>
+                <button  onClick={() => sendPostRequest().catch(error => console.error(error))} className="  items-center justify-center px-12 py-3 text-base font-medium text-white bg-purple-700 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 ">Add receipts</button>
                 <div className="-ml-12 -mt-12 p-12  lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
                     <img
                         className="w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"
