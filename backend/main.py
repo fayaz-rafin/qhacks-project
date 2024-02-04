@@ -134,7 +134,7 @@ def cron(user: str = Form(...)):
 
 
 @app.post("/sample_recall", response_model=RecallResponse, tags=["server"])
-def recall(user: str = Form(...), product: str = Form(...)):
+def recall(user: str = Form(...), product: str = Form(...), email: str = Form(...)):
     """
     This function is used to recall a product for a specific user.
 
@@ -148,5 +148,5 @@ def recall(user: str = Form(...), product: str = Form(...)):
     Raises:
     None.
     """
-    sample_recall(user, product)
+    sample_recall(user, product, email)
     return {"message": "Sample test complete"}
