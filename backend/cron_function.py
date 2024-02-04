@@ -17,11 +17,26 @@ def check_for_new_recalls(index: str = '1'):
     rds = existing_database(index)
     for entry in entries:
         result = similarity_search(rds, entry.title)
-        print(result)
+        # print(result)
+        score = result[0][1]
+        metadata = result[0][0].metadata
+        message = (
+            f"Recall for {entry.title}: \nProduct: {metadata['description']}\nMerchant: {metadata['merchant_name']}\n"
+            f"Date: {metadata['transaction_date']}\nLink: {entry.link}\nConfidence: {round((1 - score) * 100, 2)}%")
         webhook = SyncWebhook.from_url(DISCORD_WEBHOOK)
-        webhook.send(result[0])
-        # print(entry.title, entry.link)
+        webhook.send(message)
 
+
+def sample_recall(index: str = '1', product: str = 'Cookie'):
+    webhook = SyncWebhook.from_url(DISCORD_WEBHOOK)
+    rds = existing_database(index)
+    result = similarity_search(rds, product)
+    # print(result)
+    score = result[0][1]
+    metadata = result[0][0].metadata
+    message = (f"Recall for {product}: \nProduct: {metadata['description']}\nMerchant: {metadata['merchant_name']}\n"
+               f"Date: {metadata['transaction_date']}\nLink: https://recalls-rappels.canada.ca/en/alert-recall/alumauy-brand-sweet-pepper-ground-spice-recalled-due-undeclared-gluten\nConfidence: {round((1 - score) * 100, 2)}%")
+    webhook.send(message)
 
 if __name__ == "__main__":
     # schedule.every(1).minutes.do(my_function)

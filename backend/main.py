@@ -8,7 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from azure_functions import extract_value
 from redis_functions import existing_database, add_vectors, initialize_database
-from cron_function import check_for_new_recalls
+from cron_function import check_for_new_recalls, sample_recall
 
 dotenv.load_dotenv()
 
@@ -68,3 +68,12 @@ def cron(user: str = Form(...)):
     """
     check_for_new_recalls(user)
     return {"message": "Cron job complete"}
+
+@app.post("/sample_recall")
+def recall(user: str = Form(...), product: str = Form(...)):
+    """
+    Cron job to check for new recalls
+    :return:
+    """
+    sample_recall(user, product)
+    return {"message": "Sample test complete"}
