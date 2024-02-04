@@ -13,10 +13,11 @@ def fetch_feed(feed_url):
         return []
 
 
-# Example usage
-rss_feed_url = 'https://recalls-rappels.canada.ca/en/feed/cfia-alerts-recalls'
-entries = fetch_feed(rss_feed_url)
+if __name__ == "__main__":
+    # Example usage
+    rss_feed_url = 'https://recalls-rappels.canada.ca/en/feed/cfia-alerts-recalls'
+    entries = fetch_feed(rss_feed_url)
 
-# Print titles and links of the latest entries
-for entry in entries:
-    print(entry.title, entry.link)
+    # Print titles and links of the latest entries
+    for entry in entries:
+        print(entry.title, entry.link)

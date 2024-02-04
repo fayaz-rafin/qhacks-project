@@ -8,6 +8,7 @@ from fastapi.middleware.cors import CORSMiddleware
 
 from azure_functions import extract_value
 from redis_functions import existing_database, add_vectors, initialize_database
+from cron_function import check_for_new_recalls
 
 dotenv.load_dotenv()
 
@@ -58,3 +59,12 @@ def upload(file: UploadFile = File(...), user: str = Form(...)):
 
     return {"message": f"Successfully uploaded {file.filename}", "user": user}
 
+
+@app.post("/cron")
+def cron(user: str = Form(...)):
+    """
+    Cron job to check for new recalls
+    :return:
+    """
+    check_for_new_recalls(user)
+    return {"message": "Cron job complete"}

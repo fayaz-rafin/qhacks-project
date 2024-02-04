@@ -56,8 +56,8 @@ def existing_database(index: str):
     return rds
 
 
-def similarity_search(rds, query: str, k: int):
-    results = rds.similarity_search(query, k=k)
+def similarity_search(rds, query: str):
+    results = rds.similarity_search_with_score(query)
     return results
 
 
