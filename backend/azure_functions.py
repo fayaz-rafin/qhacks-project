@@ -1,14 +1,19 @@
 # https://learn.microsoft.com/en-us/azure/ai-services/document-intelligence/sdk-overview-v4-0?view=doc-intel-4.0.0&tabs=python
 # https://learn.microsoft.com/en-us/python/api/overview/azure/ai-documentintelligence-readme?view=azure-python-preview#using-prebuilt-models
+# https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python?tabs=managed-identity%2Croles-azure-portal%2Csign-in-azure-cli
+# https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-upload-python
 import os
 import dotenv
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
 
 dotenv.load_dotenv()
 
 endpoint = os.environ["AZURE_ENDPOINT"]
 key = os.environ["AZURE_API_KEY"]
+blob_endpoint = os.environ["AZURE_BLOB_ENDPOINT"]
+blob_key = os.environ["AZURE_BLOB_API_KEY"]
 
 
 def extract_value(file: bytes):
@@ -56,3 +61,23 @@ def extract_value(file: bytes):
                 fields['total'] = total.get('valueCurrency')
         extracted_data.append(fields)
     return extracted_data
+
+
+# def store_blob(file: bytes):
+#     blob_service_client = BlobServiceClient(account_url=blob_endpoint, credential=blob_key)
+#     blob_client = blob_service_client.get_blob_client(container="receipts", blob=file.)
+#     container_client = blob_service_client.get_container_client("receipts")
+#     blob_client = container_client.get_blob_client("receipts")
+#     print(blob_client.upload_blob(file))
+
+def upload_blob_stream(container_name: str, file: bytes, file_name: str):
+    blob_service_client = BlobServiceClient(account_url=blob_endpoint, credential=blob_key)
+    blob_client = blob_service_client.get_blob_client(container=container_name, blob=file_name)
+    print(blob_client.upload_blob(file, blob_type="BlockBlob"))
+    print(blob_client.url)
+
+
+if __name__ == "__main__":
+    with open("sample_receipt.jpeg", "rb") as f:
+        file_name = f.name
+        upload_blob_stream('receipts', f, file_name)
