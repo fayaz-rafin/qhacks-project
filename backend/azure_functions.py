@@ -8,6 +8,8 @@ import dotenv
 import uuid
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
+from azure.ai.documentintelligence.models import AnalyzeDocumentRequest
+from azure.ai.formrecognizer import DocumentAnalysisClient
 from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, ContentSettings
 
 dotenv.load_dotenv()
@@ -18,17 +20,19 @@ blob_endpoint = os.environ["AZURE_BLOB_ENDPOINT"]
 blob_key = os.environ["AZURE_BLOB_API_KEY"]
 
 
-def extract_value(file: bytes):
+# def extract_value(file: bytes):
+def extract_value(url: str):
     """
     Extracts information from a receipt document using Azure Cognitive Services.
     
+    :param url: The receipt document hosted on a public URL.
     :param file: The receipt document in bytes format.
     :return: A list of dictionaries containing the extracted information from the receipt.
     """
     extracted_data = []
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
-    poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", analyze_request=file, locale="en-US",
-                                                             content_type="application/octet-stream")
+    # print(f'Image url: {url}')
+    poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", AnalyzeDocumentRequest(url_source=url))
     receipts = poller.result()
 
     for idx, receipt in enumerate(receipts.documents):
@@ -71,7 +75,7 @@ def extract_value(file: bytes):
     return extracted_data
 
 
-def upload_blob_stream(container_name: str, file: bytes, file_extension: str):
+async def upload_blob_stream(container_name: str, file: bytes, file_extension: str):
     """
     Uploads a file as a blob to the specified container in Azure Blob Storage.
 

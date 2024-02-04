@@ -76,7 +76,7 @@ class RecallResponse(BaseModel):
 
 
 @app.post("/upload", response_model=UploadResponse, tags=["server"])
-def upload(file: UploadFile = File(...), user: str = Form(...)):
+async def upload(file: UploadFile = File(...), user: str = Form(...)):
     """
     Uploads a file to the server and processes the receipt data.
 
@@ -95,7 +95,9 @@ def upload(file: UploadFile = File(...), user: str = Form(...)):
     """
     print("Processing file")
     contents = file.file.read()
-    receipt = extract_value(contents)
+    file_name = file.filename
+    file_url = await upload_blob_stream(user, contents, file_name)
+    receipt = extract_value(file_url)
     try:
         rds = existing_database(user)
     except Exception as e:
@@ -108,8 +110,7 @@ def upload(file: UploadFile = File(...), user: str = Form(...)):
             if 'transaction_date' in transaction:
                 embed_json['transaction_date'] = transaction['transaction_date']
             add_vectors(rds, [item['description']], [embed_json])
-    file_name = file.filename
-    file_url = upload_blob_stream(user, contents, file_name)
+
     # print(receipt)
 
     return {"message": f"Successfully uploaded {file.filename}", "user": user, "file_url": file_url}
