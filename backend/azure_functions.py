@@ -19,6 +19,12 @@ blob_key = os.environ["AZURE_BLOB_API_KEY"]
 
 
 def extract_value(file: bytes):
+    """
+    Extracts information from a receipt document using Azure Cognitive Services.
+    
+    :param file: The receipt document in bytes format.
+    :return: A list of dictionaries containing the extracted information from the receipt.
+    """
     extracted_data = []
     document_analysis_client = DocumentIntelligenceClient(endpoint=endpoint, credential=AzureKeyCredential(key))
     poller = document_analysis_client.begin_analyze_document("prebuilt-receipt", analyze_request=file, locale="en-US",
@@ -66,6 +72,18 @@ def extract_value(file: bytes):
 
 
 def upload_blob_stream(container_name: str, file: bytes, file_extension: str):
+    """
+    Uploads a file as a blob to the specified container in Azure Blob Storage.
+
+    :param container_name: The name of the container where the blob will be uploaded.
+    :type container_name: str
+    :param file: The file to be uploaded as a blob.
+    :type file: bytes
+    :param file_extension: The extension of the file.
+    :type file_extension: str
+    :return: The URL of the uploaded blob.
+    :rtype: str
+    """
     blob_service_client = BlobServiceClient(account_url=blob_endpoint, credential=blob_key)
 
     # Generate a unique filename using UUID

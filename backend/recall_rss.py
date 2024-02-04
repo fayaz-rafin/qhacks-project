@@ -2,6 +2,12 @@ import feedparser
 
 
 def fetch_feed(feed_url):
+    """
+    Fetches and parses an RSS feed from the given URL.
+
+    :param feed_url: The URL of the RSS feed to fetch.
+    :return: A list of entries from the parsed feed.
+    """
     # Parse the feed
     feed = feedparser.parse(feed_url)
 
