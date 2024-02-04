@@ -93,7 +93,8 @@ export default function App() {
                 </div>
                 <button onClick={() => setShowTable(true)} className="items-center justify-center px-12 py-3 text-base font-medium text-white bg-purple-700 border border-transparent rounded-md shadow-sm hover:bg-indigo-700">Show Results</button>
                 {showTable && (
-                    <table className="table-auto py-4 px-2">
+                    <div className='flex items-center justify-center h-screen'>    
+                    <table className=" table-auto py-4 px-2">
                         <thead>
                             <tr>
                                 <th className="px-4 py-2">Company</th>
@@ -127,6 +128,7 @@ export default function App() {
                             {/* More rows as needed */}
                         </tbody>
                     </table>
+                    </div>
                 )}
                 <div className="-ml-12 -mt-12 p-12  lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
                     <img
