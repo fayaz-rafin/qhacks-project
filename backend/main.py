@@ -1,12 +1,9 @@
 # https://fastapi.tiangolo.com/tutorial/request-files/#optional-file-upload
-import base64
 import os
 import dotenv
-
 from fastapi import FastAPI, UploadFile, File, Form
 from fastapi.middleware.cors import CORSMiddleware
-
-from azure_functions import extract_value
+from azure_functions import extract_value, upload_blob_stream
 from redis_functions import existing_database, add_vectors, initialize_database
 from cron_function import check_for_new_recalls, sample_recall
 
@@ -55,9 +52,11 @@ def upload(file: UploadFile = File(...), user: str = Form(...)):
             if 'transaction_date' in transaction:
                 embed_json['transaction_date'] = transaction['transaction_date']
             add_vectors(rds, [item['description']], [embed_json])
+    file_name = file.filename
+    file_url = upload_blob_stream(user, contents, file_name)
     # print(receipt)
 
-    return {"message": f"Successfully uploaded {file.filename}", "user": user}
+    return {"message": f"Successfully uploaded {file.filename}", "user": user, "file_url": file_url}
 
 
 @app.post("/cron")
@@ -68,6 +67,7 @@ def cron(user: str = Form(...)):
     """
     check_for_new_recalls(user)
     return {"message": "Cron job complete"}
+
 
 @app.post("/sample_recall")
 def recall(user: str = Form(...), product: str = Form(...)):

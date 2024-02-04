@@ -2,11 +2,13 @@
 # https://learn.microsoft.com/en-us/python/api/overview/azure/ai-documentintelligence-readme?view=azure-python-preview#using-prebuilt-models
 # https://learn.microsoft.com/en-us/azure/storage/blobs/storage-quickstart-blobs-python?tabs=managed-identity%2Croles-azure-portal%2Csign-in-azure-cli
 # https://learn.microsoft.com/en-us/azure/storage/blobs/storage-blob-upload-python
+import mimetypes
 import os
 import dotenv
+import uuid
 from azure.core.credentials import AzureKeyCredential
 from azure.ai.documentintelligence import DocumentIntelligenceClient
-from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient
+from azure.storage.blob import BlobServiceClient, BlobClient, ContainerClient, ContentSettings
 
 dotenv.load_dotenv()
 
@@ -63,21 +65,30 @@ def extract_value(file: bytes):
     return extracted_data
 
 
-# def store_blob(file: bytes):
-#     blob_service_client = BlobServiceClient(account_url=blob_endpoint, credential=blob_key)
-#     blob_client = blob_service_client.get_blob_client(container="receipts", blob=file.)
-#     container_client = blob_service_client.get_container_client("receipts")
-#     blob_client = container_client.get_blob_client("receipts")
-#     print(blob_client.upload_blob(file))
-
-def upload_blob_stream(container_name: str, file: bytes, file_name: str):
+def upload_blob_stream(container_name: str, file: bytes, file_extension: str):
     blob_service_client = BlobServiceClient(account_url=blob_endpoint, credential=blob_key)
+
+    # Generate a unique filename using UUID
+    unique_identifier = str(uuid.uuid4())
+    file_name = unique_identifier + file_extension
+
     blob_client = blob_service_client.get_blob_client(container=container_name, blob=file_name)
-    print(blob_client.upload_blob(file, blob_type="BlockBlob"))
-    print(blob_client.url)
+
+    # Detect the content type based on the file extension
+    content_type, _ = mimetypes.guess_type(file_name)
+
+    # If content type couldn't be determined, default to 'application/octet-stream'
+    if not content_type:
+        content_type = 'application/octet-stream'
+
+    content_settings = ContentSettings(content_type=content_type)
+
+    blob_client.upload_blob(file, blob_type="BlockBlob", content_settings=content_settings)
+    # print(blob_client.url)
+    return blob_client.url
 
 
 if __name__ == "__main__":
     with open("sample_receipt.jpeg", "rb") as f:
         file_name = f.name
-        upload_blob_stream('receipts', f, file_name)
+        print(upload_blob_stream('u2', f, file_name))
