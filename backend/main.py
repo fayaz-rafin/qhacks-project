@@ -93,6 +93,7 @@ def upload(file: UploadFile = File(...), user: str = Form(...)):
     Raises:
     None.
     """
+    print("Processing file")
     contents = file.file.read()
     receipt = extract_value(contents)
     try:

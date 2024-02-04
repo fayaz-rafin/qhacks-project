@@ -1,10 +1,31 @@
 import { CloudArrowUpIcon, LockClosedIcon, ServerIcon } from '@heroicons/react/20/solid'
 import './App.css';
-import sendPostRequest from './SendPostRequest';
+import sendPostRequest from './sendPostRequest';
+import {useState} from "react";
 
 
 
 export default function App() {
+    const [file, setFile] = useState(null);
+    const handleFileChange = (e) => {
+        const uploadedFile = e.target.files[0];
+        setFile(uploadedFile);
+    };
+    const handleFormSubmit = async () => {
+        if (file) {
+            try {
+                const formData = new FormData();
+                formData.append('file', file);
+                formData.append('user', '1'); // Add any other form data as needed
+                await sendPostRequest(formData);
+                console.log('File uploaded successfully');
+            } catch (error) {
+                console.error('Error occurred while uploading file:', error);
+            }
+        } else {
+            console.error('No file selected');
+        }
+    };
     return (
         
         <div className="relative isolate overflow-hidden bg-white px-6 py-24 sm:py-32 lg:overflow-visible lg:px-0">
@@ -59,9 +80,10 @@ export default function App() {
                         className="relative m-0 block w-full min-w-0 flex-auto rounded border border-solid border-neutral-300 bg-clip-padding px-3 py-[0.32rem] text-base font-normal text-neutral-700 transition duration-300 ease-in-out file:-mx-3 file:-my-[0.32rem] file:overflow-hidden file:rounded-none file:border-0 file:border-solid file:border-inherit file:bg-neutral-100 file:px-3 file:py-[0.32rem] file:text-neutral-700 file:transition file:duration-150 file:ease-in-out file:[border-inline-end-width:1px] file:[margin-inline-end:0.75rem] hover:file:bg-neutral-200 focus:border-primary focus:text-neutral-700 focus:shadow-te-primary focus:outline-none dark:border-neutral-600 dark:text-neutral-200 dark:file:bg-neutral-700 dark:file:text-neutral-100 dark:focus:border-primary"
                         type="file"
                         id="formFile"
+                        onChange={handleFileChange}
                     />
                 </div>
-                <button  onClick={() => sendPostRequest().catch(error => console.error(error))} className="  items-center justify-center px-12 py-3 text-base font-medium text-white bg-purple-700 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 ">Add receipts</button>
+                <button  onClick={handleFormSubmit} className="  items-center justify-center px-12 py-3 text-base font-medium text-white bg-purple-700 border border-transparent rounded-md shadow-sm hover:bg-indigo-700 ">Add receipts</button>
                 <div className="-ml-12 -mt-12 p-12  lg:top-4 lg:col-start-2 lg:row-span-2 lg:row-start-1 lg:overflow-hidden">
                     <img
                         className="w-[48rem] max-w-none rounded-xl bg-gray-900 shadow-xl ring-1 ring-gray-400/10 sm:w-[57rem]"

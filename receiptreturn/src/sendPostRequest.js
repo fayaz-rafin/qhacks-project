@@ -1,19 +1,14 @@
-
-
-async function sendPostRequest() {
-    const response = await fetch('https://example.com/api/some-endpoint', {
+async function sendPostRequest(formData) {
+    // const formData = new FormData();
+    // formData.append('file', fileInputElement.files[0]); // Append the first file from fileInputElement
+    // formData.append('user', '1');
+    const response = await fetch('http://0.0.0.0:8080/upload', {
         method: 'POST',
-        headers: {
-            'Content-Type': 'application/json'
-        },
-        body: JSON.stringify({
-            key1: 'value1',
-            key2: 'value2'
-        })
+        body: formData
     });
 
     if (!response.ok) {
-        throw new Error(`HTTP error! status: ${response.status}`);
+        throw new Error(`HTTP error! status: ${await response.text()}`);
     }
 
     const data = await response.json();
